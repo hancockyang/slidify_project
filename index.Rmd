@@ -1,0 +1,93 @@
+---
+title       : Slidify Project
+subtitle    : Investigation of pca on regression model
+author      : Hankang Yang  
+job         : TA
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]     # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+```{r setup, cache = F, echo = F, message = F, warning = F, tidy = F}
+# make this an external chunk that can be included in any file
+options(width = 100)
+opts_chunk$set(message = F, error = F, warning = F, comment = NA, fig.align = 'center', dpi = 100, tidy = F, cache.path = '.cache/', fig.path = 'fig/')
+
+options(xtable.type = 'html')
+knit_hooks$set(inline = function(x) {
+  if(is.numeric(x)) {
+    round(x, getOption('digits'))
+  } else {
+    paste(as.character(x), collapse = ', ')
+  }
+})
+knit_hooks$set(plot = knitr:::hook_plot_html)
+```
+
+## Investigation of pca on regression model
+
+In the project, I will do
+
+1. Data exploratory 
+
+2. Linear regression model fitting
+
+3. Making prediction on difference between automatice and manual 
+
+of the `mtcar` data in R
+
+--- .class #id 
+
+## Data exploratory
+
+A `?mtcars` can be used to investigate the data. 
+
+```{r}
+summary(mtcars)
+```
+
+---
+
+## Data exploratory (cont'd Correlation plot)
+
+```{r,fig.height=3.5,fig.width=3.5,fig.align='center',fig.cap="correlation plot"}
+library(corrplot)
+correlMatrix <- cor(mtcars[, -9]) # eliminate the 
+corrplot(correlMatrix, order = "FPC", method = "circle", type = "lower", 
+         tl.cex = 0.8,  tl.col = rgb(0, 0, 0))
+```
+
+---
+
+## Linear model
+
+Build linear model with the same linear regession with or without "pca"
+
+```{r}
+library(caret)
+set.seed(1234)
+inTrain <- createDataPartition(y = mtcars$am, p = 0.7, list = FALSE)
+train <- mtcars[inTrain, ]
+test <- mtcars[-inTrain, ]
+model1 <- train(factor(am) ~., method = "glm", data = train) #glm method
+model2 <- train(factor(am) ~., method = "glm", preProcess = "pca", data = train) #glm method with pca
+prediction1 <- predict(model1,test)
+prediction2 <- predict(model2,test)
+```
+
+---
+
+## Accurarcy
+
+We can see the linear regression with "pca" as pre-process has much better accuracy: 1!
+
+```{r}
+confusionMatrix(test$am, prediction1)$overall[1]
+confusionMatrix(test$am, prediction2)$overall[1]
+```
+
+
+
