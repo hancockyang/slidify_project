@@ -33,7 +33,7 @@
         <slide class="title-slide segue nobackground">
   <hgroup class="auto-fadein">
     <h1>Slidify Project</h1>
-    <h2>Investigation of pca on regression model</h2>
+    <h2>Pitch shiny project</h2>
     <p>Hankang Yang<br/>TA</p>
   </hgroup>
   <article></article>  
@@ -43,18 +43,16 @@
     <!-- SLIDES -->
     <slide class="" id="slide-1" style="background:;">
   <hgroup>
-    <h2>Investigation of pca on regression model</h2>
+    <h2>Introduction of Circle shiny app</h2>
   </hgroup>
   <article data-timings="">
-    <p>In the project, I will do</p>
-
-<ol>
-<li><p>Data exploratory </p></li>
-<li><p>Linear regression model fitting</p></li>
-<li><p>Making prediction on difference between automatice and manual </p></li>
+    <ol>
+<li>This presentation give a ducomentation of this &quot;Circle shiny&quot; applicaton</li>
+<li>This app is aimed to calculate circumference or area of circle by user defined radius</li>
+<li>&quot;Circle&quot; shiny application is posted in this <a href="https://hankang.shinyapps.io/shinnyprojectforDataproducecourse/">link</a></li>
+<li>The related <code>serve.R</code> and <code>ui.R</code> file can be found in <a href="https://github.com/hancockyang/shiny_project">Github</a>
+<img class=center src=1.png height=450></li>
 </ol>
-
-<p>of the <code>mtcar</code> data in R</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -62,29 +60,18 @@
 
 <slide class="class" id="id" style="background:;">
   <hgroup>
-    <h2>Data exploratory</h2>
+    <h2>Simple mathematic</h2>
   </hgroup>
   <article data-timings="">
-    <p>A <code>?mtcars</code> can be used to investigate the data. </p>
+    <p>This app only allows user to enter 2 variables:</p>
 
-<pre><code class="r">summary(mtcars)
-</code></pre>
+<ol>
+<li>Radius of circle, \(R\)</li>
+<li>Subject user wants to calculate (circumference, \(C\) or area, \(A\))</li>
+</ol>
 
-<pre><code>      mpg             cyl             disp             hp             drat             wt       
- Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0   Min.   :2.760   Min.   :1.513  
- 1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5   1st Qu.:3.080   1st Qu.:2.581  
- Median :19.20   Median :6.000   Median :196.3   Median :123.0   Median :3.695   Median :3.325  
- Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7   Mean   :3.597   Mean   :3.217  
- 3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0   3rd Qu.:3.920   3rd Qu.:3.610  
- Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0   Max.   :4.930   Max.   :5.424  
-      qsec             vs               am              gear            carb      
- Min.   :14.50   Min.   :0.0000   Min.   :0.0000   Min.   :3.000   Min.   :1.000  
- 1st Qu.:16.89   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:3.000   1st Qu.:2.000  
- Median :17.71   Median :0.0000   Median :0.0000   Median :4.000   Median :2.000  
- Mean   :17.85   Mean   :0.4375   Mean   :0.4062   Mean   :3.688   Mean   :2.812  
- 3rd Qu.:18.90   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000  
- Max.   :22.90   Max.   :1.0000   Max.   :1.0000   Max.   :5.000   Max.   :8.000  
-</code></pre>
+<p>\[C = 2 \pi R^2\]
+\[A = \pi R^2\]</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -92,16 +79,27 @@
 
 <slide class="" id="slide-3" style="background:;">
   <hgroup>
-    <h2>Data exploratory (cont&#39;d Correlation plot)</h2>
+    <h2>Core R code</h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r">library(corrplot)
-correlMatrix &lt;- cor(mtcars[, -9]) # eliminate the 
-corrplot(correlMatrix, order = &quot;FPC&quot;, method = &quot;circle&quot;, type = &quot;lower&quot;, 
-         tl.cex = 0.8,  tl.col = rgb(0, 0, 0))
+    <p>The main R code performs this caculation is </p>
+
+<p>Example:</p>
+
+<pre><code class="r">R &lt;- 3
 </code></pre>
 
-<div class="rimage center"><img src="fig/unnamed-chunk-2-1.png" title="correlation plot" alt="correlation plot" class="plot" /></div>
+<pre><code class="r">2*pi*R
+</code></pre>
+
+<pre><code>[1] 18.84956
+</code></pre>
+
+<pre><code class="r">pi*R^2
+</code></pre>
+
+<pre><code>[1] 28.27433
+</code></pre>
 
   </article>
   <!-- Presenter Notes -->
@@ -109,46 +107,28 @@ corrplot(correlMatrix, order = &quot;FPC&quot;, method = &quot;circle&quot;, typ
 
 <slide class="" id="slide-4" style="background:;">
   <hgroup>
-    <h2>Linear model</h2>
+    <h2>Know how</h2>
   </hgroup>
   <article data-timings="">
-    <p>Build linear model with the same linear regession with or without &quot;pca&quot;</p>
+    <p>Operation sequence:</p>
 
-<pre><code class="r">library(caret)
-set.seed(1234)
-inTrain &lt;- createDataPartition(y = mtcars$am, p = 0.7, list = FALSE)
-train &lt;- mtcars[inTrain, ]
-test &lt;- mtcars[-inTrain, ]
-model1 &lt;- train(factor(am) ~., method = &quot;glm&quot;, data = train) #glm method
-model2 &lt;- train(factor(am) ~., method = &quot;glm&quot;, preProcess = &quot;pca&quot;, data = train) #glm method with pca
-prediction1 &lt;- predict(model1,test)
-prediction2 &lt;- predict(model2,test)
-</code></pre>
+<ol>
+<li><p>Enter the radius value in the textbox in the sidebar</p></li>
+<li><p>Specify the subject you want to calculate, circumference or area by the dropdwon bar</p></li>
+<li><p>Hit the &#39;submit&#39; buttom</p></li>
+<li><p>The mainbar will diplay the result and the variable you specified</p></li>
+<li><p>Next slide show what the result look like</p></li>
+</ol>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-5" style="background:;">
-  <hgroup>
-    <h2>Accurarcy</h2>
-  </hgroup>
   <article data-timings="">
-    <p>We can see the linear regression with &quot;pca&quot; as pre-process has much better accuracy: 1!</p>
+    <p>Results</p>
 
-<pre><code class="r">confusionMatrix(test$am, prediction1)$overall[1]
-</code></pre>
-
-<pre><code> Accuracy 
-0.8888889 
-</code></pre>
-
-<pre><code class="r">confusionMatrix(test$am, prediction2)$overall[1]
-</code></pre>
-
-<pre><code>Accuracy 
-       1 
-</code></pre>
+<p><img class=center src=2.png height=550></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -160,31 +140,31 @@ prediction2 &lt;- predict(model2,test)
     <ul>
       <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=1 title='Investigation of pca on regression model'>
+        data-slide=1 title='Introduction of Circle shiny app'>
          1
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Data exploratory'>
+        data-slide=2 title='Simple mathematic'>
          2
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Data exploratory (cont&#39;d Correlation plot)'>
+        data-slide=3 title='Core R code'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Linear model'>
+        data-slide=4 title='Know how'>
          4
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title='Accurarcy'>
+        data-slide=5 title=''>
          5
       </a>
     </li>

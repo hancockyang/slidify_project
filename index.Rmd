@@ -1,6 +1,6 @@
 ---
 title       : Slidify Project
-subtitle    : Investigation of pca on regression model
+subtitle    : Pitch shiny project
 author      : Hankang Yang  
 job         : TA
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
@@ -27,67 +27,66 @@ knit_hooks$set(inline = function(x) {
 knit_hooks$set(plot = knitr:::hook_plot_html)
 ```
 
-## Investigation of pca on regression model
+## Introduction of Circle shiny app
 
-In the project, I will do
-
-1. Data exploratory 
-
-2. Linear regression model fitting
-
-3. Making prediction on difference between automatice and manual 
-
-of the `mtcar` data in R
+1. This presentation give a ducomentation of this "Circle shiny" applicaton
+2. This app is aimed to calculate circumference or area of circle by user defined radius
+3. "Circle" shiny application is posted in this [link](https://hankang.shinyapps.io/shinnyprojectforDataproducecourse/)
+4. The related `serve.R` and `ui.R` file can be found in [Github](https://github.com/hancockyang/shiny_project)
+<img class=center src=1.png height=450>
 
 --- .class #id 
 
-## Data exploratory
+## Simple mathematic
 
-A `?mtcars` can be used to investigate the data. 
+This app only allows user to enter 2 variables:
+
+1. Radius of circle, $R$
+2. Subject user wants to calculate (circumference, $C$ or area, $A$)
+
+$$C = 2 \pi R^2$$
+$$A = \pi R^2$$
+
+---
+
+## Core R code
+
+The main R code performs this caculation is 
+
+Example:
+
+```{r code}
+R <- 3
+```
 
 ```{r}
-summary(mtcars)
+2*pi*R
+```
+
+```{r}
+pi*R^2
 ```
 
 ---
 
-## Data exploratory (cont'd Correlation plot)
+## Know how
 
-```{r,fig.height=3.5,fig.width=3.5,fig.align='center',fig.cap="correlation plot"}
-library(corrplot)
-correlMatrix <- cor(mtcars[, -9]) # eliminate the 
-corrplot(correlMatrix, order = "FPC", method = "circle", type = "lower", 
-         tl.cex = 0.8,  tl.col = rgb(0, 0, 0))
-```
+Operation sequence:
 
----
+1. Enter the radius value in the textbox in the sidebar
 
-## Linear model
+2. Specify the subject you want to calculate, circumference or area by the dropdwon bar
 
-Build linear model with the same linear regession with or without "pca"
+3. Hit the 'submit' buttom
 
-```{r}
-library(caret)
-set.seed(1234)
-inTrain <- createDataPartition(y = mtcars$am, p = 0.7, list = FALSE)
-train <- mtcars[inTrain, ]
-test <- mtcars[-inTrain, ]
-model1 <- train(factor(am) ~., method = "glm", data = train) #glm method
-model2 <- train(factor(am) ~., method = "glm", preProcess = "pca", data = train) #glm method with pca
-prediction1 <- predict(model1,test)
-prediction2 <- predict(model2,test)
-```
+4. The mainbar will diplay the result and the variable you specified
 
----
+5. Next slide show what the result look like
 
-## Accurarcy
+--- 
 
-We can see the linear regression with "pca" as pre-process has much better accuracy: 1!
+Results
 
-```{r}
-confusionMatrix(test$am, prediction1)$overall[1]
-confusionMatrix(test$am, prediction2)$overall[1]
-```
-
+<img class=center src=2.png height=550>
 
 
